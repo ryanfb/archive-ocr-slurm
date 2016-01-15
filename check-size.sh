@@ -25,28 +25,32 @@ for extension in "${extensions[@]}"; do
     case $extension in
       _jp2.zip|_raw_jp2.zip)
         for jp2 in ${1}*.jp2; do
-          convert "${jp2}" $CONVERT_OPTIONS "${jp2%.*}.png"
-          rm "${jp2}"
+          srun convert "${jp2}" $CONVERT_OPTIONS "${jp2%.*}.png" &
+          # rm "${jp2}"
         done
         ;;
       _tif.zip)
         for tif in ${1}*.tif; do
-          convert "${tif}" $CONVERT_OPTIONS "${tif%.*}.png"
-          rm "${tif}"
+          srun convert "${tif}" $CONVERT_OPTIONS "${tif%.*}.png" &
+          # rm "${tif}"
         done
         ;;
       .pdf|_bw.pdf)
-        convert -density 300 "${filename}" $CONVERT_OPTIONS "${1}_%05d.png"
-        rm "${filename}"
+        srun convert -density 300 "${filename}" $CONVERT_OPTIONS "${1}_%05d.png" &
+        # rm "${filename}"
         ;;
       *)
         echo "Unknown extension"
     esac
+    echo "Waiting for conversion..."
+    wait
     # should have everything in Grayscale PNG at this point
     for png in ${1}*.png; do
-      tesseract -l lat+grc+eng "${png}" "${png%.*}" hocrpdf
-      rm -v "${png}"
+      srun ~/local/bin/tesseract -l lat "${png}" "${png%.*}" hocrpdf &
+      # rm "${png}"
     done
+    echo "Waiting for OCR..."
+    wait
     break
   fi
 done
