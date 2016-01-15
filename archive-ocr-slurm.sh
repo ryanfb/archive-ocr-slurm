@@ -1,8 +1,6 @@
 #!/bin/bash
 
-SRUN_CONVERT_OPTIONS="--mem-per-cpu=768 --time=10 -n 1 -N 1"
-SRUN_TESSERACT_OPTIONS="--mem-per-cpu=256 --time=10 -n 1 -N 1"
-CONVERT_OPTIONS="-type Grayscale -background white +matte -depth 32"
+SRUN_OPTIONS="-n 1 -N 1 --time=10"
 declare -a extensions=("_jp2.zip" "_tif.zip" "_raw_jp2.zip" ".pdf" "_bw.pdf")
 
 for extension in "${extensions[@]}"; do
@@ -27,34 +25,25 @@ for extension in "${extensions[@]}"; do
     case $extension in
       _jp2.zip|_raw_jp2.zip)
         for jp2 in ${1}*.jp2; do
-          srun -J convert_jp2 $SRUN_CONVERT_OPTIONS convert "${jp2}" $CONVERT_OPTIONS "${jp2%.*}.png" &
+          srun $SRUN_OPTIONS ~/archive-ocr-slurm-runocr.sh "${jp2}" "${2}" &
         done
-        wait
-        rm ${1}*.jp2
         ;;
       _tif.zip)
         for tif in ${1}*.tif; do
-          srun -J convert_tif $SRUN_CONVERT_OPTIONS convert "${tif}" $CONVERT_OPTIONS "${tif%.*}.png" &
+          srun $SRUN_OPTIONS ~/archive-ocr-slurm-runocr.sh "${tif}" "${2}" &
         done
-        wait
-        rm ${1}*.tif
         ;;
       .pdf|_bw.pdf)
-        srun -J convert_pdf $SRUN_CONVERT_OPTIONS convert -density 300 "${filename}" $CONVERT_OPTIONS "${1}_%05d.png" &
-        wait
-        rm ${filename}
+        convert -density 300 "${filename}" $CONVERT_OPTIONS "${1}_%05d.png"
+        for png in ${1}*.png; do
+          srun $SRUN_OPTIONS ~/archive-ocr-slurm-runocr.sh "${png}" "${2}" &
+        done
         ;;
       *)
         echo "Unknown extension"
     esac
-    # should have everything in Grayscale PNG at this point
-    for png in ${1}*.png; do
-      srun $SRUN_TESSERACT_OPTIONS ~/local/bin/tesseract -l ${2} "${png}" "${png%.*}" hocrpdf &
-      # rm "${png}"
-    done
     echo "Waiting for OCR..."
     wait
-    rm ${1}*.png
     break
   fi
 done
