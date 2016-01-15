@@ -46,7 +46,7 @@ for extension in "${extensions[@]}"; do
     wait
     # should have everything in Grayscale PNG at this point
     for png in ${1}*.png; do
-      srun ~/local/bin/tesseract -l lat "${png}" "${png%.*}" hocrpdf &
+      srun ~/local/bin/tesseract -l ${2} "${png}" "${png%.*}" hocrpdf &
       # rm "${png}"
     done
     echo "Waiting for OCR..."
