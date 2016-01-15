@@ -1,7 +1,7 @@
 #!/bin/bash
 
-SRUN_CONVERT_OPTIONS="--mem=768"
-SRUN_TESSERACT_OPTIONS="--mem=256"
+SRUN_CONVERT_OPTIONS="--mem=768 --time=10"
+SRUN_TESSERACT_OPTIONS="--mem=256 --time=10"
 CONVERT_OPTIONS="-type Grayscale -background white +matte -depth 32"
 declare -a extensions=("_jp2.zip" "_tif.zip" "_raw_jp2.zip" ".pdf" "_bw.pdf")
 
