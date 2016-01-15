@@ -1,5 +1,7 @@
 #!/bin/bash
 
+SRUN_CONVERT_OPTIONS="--mem=768"
+SRUN_TESSERACT_OPTIONS="--mem=256"
 CONVERT_OPTIONS="-type Grayscale -background white +matte -depth 32"
 declare -a extensions=("_jp2.zip" "_tif.zip" "_raw_jp2.zip" ".pdf" "_bw.pdf")
 
@@ -25,32 +27,34 @@ for extension in "${extensions[@]}"; do
     case $extension in
       _jp2.zip|_raw_jp2.zip)
         for jp2 in ${1}*.jp2; do
-          srun convert "${jp2}" $CONVERT_OPTIONS "${jp2%.*}.png" &
-          # rm "${jp2}"
+          srun -J convert_jp2 $SRUN_CONVERT_OPTIONS convert "${jp2}" $CONVERT_OPTIONS "${jp2%.*}.png" &
         done
+        wait
+        rm ${1}*.jp2
         ;;
       _tif.zip)
         for tif in ${1}*.tif; do
-          srun convert "${tif}" $CONVERT_OPTIONS "${tif%.*}.png" &
-          # rm "${tif}"
+          srun -J convert_tif $SRUN_CONVERT_OPTIONS convert "${tif}" $CONVERT_OPTIONS "${tif%.*}.png" &
         done
+        wait
+        rm ${1}*.tif
         ;;
       .pdf|_bw.pdf)
-        srun convert -density 300 "${filename}" $CONVERT_OPTIONS "${1}_%05d.png" &
-        # rm "${filename}"
+        srun -J convert_pdf $SRUN_CONVERT_OPTIONS convert -density 300 "${filename}" $CONVERT_OPTIONS "${1}_%05d.png" &
+        wait
+        rm ${filename}
         ;;
       *)
         echo "Unknown extension"
     esac
-    echo "Waiting for conversion..."
-    wait
     # should have everything in Grayscale PNG at this point
     for png in ${1}*.png; do
-      srun ~/local/bin/tesseract -l ${2} "${png}" "${png%.*}" hocrpdf &
+      srun $SRUN_TESSERACT_OPTIONS ~/local/bin/tesseract -l ${2} "${png}" "${png%.*}" hocrpdf &
       # rm "${png}"
     done
     echo "Waiting for OCR..."
     wait
+    rm ${1}*.png
     break
   fi
 done
