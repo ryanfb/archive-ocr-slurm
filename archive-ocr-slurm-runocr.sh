@@ -8,5 +8,5 @@ if [ "${filename##*.}" != ".png" ]; then
   convert "${1}" $CONVERT_OPTIONS "${1%.*}.png"
   rm "${1}"
 fi
-~/local/bin/tesseract -l ${2} "${1%.*}.png" "${1%.*}" hocrpdf
+~/local/bin/tesseract -l ${2} "${1%.*}.png" "${1%.*}" hocr
 rm "${1%.*}.png"
