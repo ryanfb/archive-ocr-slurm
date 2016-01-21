@@ -39,6 +39,7 @@ for extension in "${extensions[@]}"; do
         ;;
       .pdf|_bw.pdf)
         convert -density 300 "${filename}" $CONVERT_OPTIONS "${1}_%05d.png"
+        rm "${filename}"
         for png in ${1}*.png; do
           sbatch $SBATCH_OPTIONS ~/archive-ocr-slurm-runocr.sh "${png}" "${2}"
         done
