@@ -19,7 +19,7 @@ for extension in "${extensions[@]}"; do
     if [ ! -f "$filename" ]; then
       echo "Downloading $filename from $url"
       curl -s -L ${url} -o "${filename}"
-      if [[ "${filename##.*}" == "zip" ]]; then
+      if [ "${filename##*.}" == "zip" ]; then
         echo "Unzipping..."
         unzip -jq "${filename}"
       fi
@@ -28,6 +28,7 @@ for extension in "${extensions[@]}"; do
       echo "Converting..."
       convert -density 300 "${filename}" $CONVERT_OPTIONS "${1}_%05d.png"
     fi
-    find . -name '*.jp2' -o -name '*.tif' -o -name '*.png' | xargs -n $CHUNK_SIZE sbatch $SBATCH_OPTIONS $DIR/archive-ocr-slurm-runocr.sh "$(pwd)" "${2}"
+    find . -name '*.jp2' -o -name '*.tif' -o -name '*.png' | xargs -n $CHUNK_SIZE sbatch $SBATCH_OPTIONS $DIR/archive-ocr-slurm-runocr.sh "${2}"
+    break
   fi
 done
