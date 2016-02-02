@@ -19,28 +19,15 @@ for extension in "${extensions[@]}"; do
     if [ ! -f "$filename" ]; then
       echo "Downloading $filename from $url"
       curl -s -L ${url} -o "${filename}"
-      case "${filename##*.}" in
-        zip)
-          echo "Unzipping..."
-          unzip -jq "${filename}"
-          ;;
-        *)
-          echo "Skipping unzip"
-      esac
+      if [[ "${filename##.*}" == "zip" ]]; then
+        echo "Unzipping..."
+        unzip -jq "${filename}"
+      fi
     fi
-    echo "Converting..."
-    case $extension in
-      _jp2.zip|_raw_jp2.zip|_tif.zip)
-        find . -name '*.jp2' -o -name '*.tif' | xargs -n $CHUNK_SIZE sbatch $SBATCH_OPTIONS $DIR/archive-ocr-slurm-runocr.sh "$(pwd)" "${2}"
-        ;;
-      .pdf|_bw.pdf)
-        convert -density 300 "${filename}" $CONVERT_OPTIONS "${1}_%05d.png"
-        rm "${filename}"
-        find . -name '*.png' | xargs -n $CHUNK_SIZE sbatch $SBATCH_OPTIONS $DIR/archive-ocr-slurm-runocr.sh "$(pwd)" "${2}"
-        ;;
-      *)
-        echo "Unknown extension"
-    esac
-    break
+    if [[ "$extension" == ".pdf" || "$extension" == "_bw.pdf" ]]; then
+      echo "Converting..."
+      convert -density 300 "${filename}" $CONVERT_OPTIONS "${1}_%05d.png"
+    fi
+    find . -name '*.jp2' -o -name '*.tif' -o -name '*.png' | xargs -n $CHUNK_SIZE sbatch $SBATCH_OPTIONS $DIR/archive-ocr-slurm-runocr.sh "$(pwd)" "${2}"
   fi
 done
