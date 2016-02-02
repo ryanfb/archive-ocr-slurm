@@ -28,7 +28,7 @@ for extension in "${extensions[@]}"; do
       echo "Converting..."
       convert -density 300 "${filename}" $CONVERT_OPTIONS "${1}_%05d.png"
     fi
-    find . -name '*.jp2' -o -name '*.tif' -o -name '*.png' | xargs -n $CHUNK_SIZE sbatch $SBATCH_OPTIONS $DIR/archive-ocr-slurm-runocr.sh "${2}"
+    find . -print0 -name '*.jp2' -o -name '*.tif' -o -name '*.png' | xargs -0 -n $CHUNK_SIZE sbatch $SBATCH_OPTIONS $DIR/archive-ocr-slurm-runocr.sh "${2}"
     break
   fi
 done
