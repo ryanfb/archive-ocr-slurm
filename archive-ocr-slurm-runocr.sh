@@ -1,7 +1,5 @@
 #!/bin/bash
 
-SRUN_CONVERT_OPTIONS="--mem-per-cpu=768 --time=10 -n 1 -N 1"
-SRUN_TESSERACT_OPTIONS="--mem-per-cpu=256 --time=10 -n 1 -N 1"
 CONVERT_OPTIONS="-type Grayscale -background white +matte -depth 32"
 
 LANG="${1}"
