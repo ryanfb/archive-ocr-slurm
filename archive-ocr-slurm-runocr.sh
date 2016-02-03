@@ -8,7 +8,7 @@ shift
 while (($#)); do 
   image="$1"
   echo "Processing: ${image}"
-  if [ "${image##*.}" != ".png" ]; then
+  if [ "${image##*.}" != "png" ]; then
     convert "${image}" $CONVERT_OPTIONS "${image%.*}.png"
     rm "${image}"
   fi
