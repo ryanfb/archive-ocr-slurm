@@ -5,7 +5,7 @@
 #SBATCH --mem-per-cpu=2048
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-CHUNK_SIZE=50
+CHUNK_SIZE=25
 SBATCH_OPTIONS="-J ${1} -n 1 -N 1 --time=$((CHUNK_SIZE * 3)) --mem-per-cpu=1024"
 declare -a extensions=("_jp2.zip" "_tif.zip" "_raw_jp2.zip" ".pdf" "_bw.pdf")
 
@@ -28,7 +28,7 @@ for extension in "${extensions[@]}"; do
       echo "Converting..."
       convert -density 300 "${filename}" $CONVERT_OPTIONS "${1}_%05d.png"
     fi
-    find . -print0 -name '*.jp2' -o -name '*.tif' -o -name '*.png' | xargs -0 -n $CHUNK_SIZE sbatch $SBATCH_OPTIONS $DIR/archive-ocr-slurm-runocr.sh "${2}"
+    find . \( -name '*.jp2' -o -name '*.tif' -o -name '*.png' \) -print0 | xargs -0 -n $CHUNK_SIZE sbatch $SBATCH_OPTIONS $DIR/archive-ocr-slurm-runocr.sh "${2}"
     break
   fi
 done
