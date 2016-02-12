@@ -8,11 +8,14 @@ shift
 while (($#)); do 
   image="$1"
   echo "Processing: ${image}"
-  if [ "${image##*.}" != "png" ]; then
-    convert "${image}" $CONVERT_OPTIONS "${image%.*}.png"
-    rm "${image}"
+  if [ ! -s "${image%.*}.txt" ]; then
+    if [ "${image##*.}" != "png" ]; then
+      convert "${image}" $CONVERT_OPTIONS "${image%.*}.png"
+    fi
+    ~/local/bin/tesseract -l "$LANG" "${image%.*}.png" "${image%.*}" hocr
   fi
-  ~/local/bin/tesseract -l "$LANG" "${image%.*}.png" "${image%.*}" hocr
-  rm "${image%.*}.png"
+  rm -fv "${image%.*}.png" "${image}"
   shift
 done
+
+echo "Done."
