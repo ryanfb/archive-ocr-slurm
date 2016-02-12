@@ -5,8 +5,8 @@
 #SBATCH --mem-per-cpu=2048
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-CHUNK_SIZE=25
-SBATCH_OPTIONS="-J ${1} -n 1 -N 1 --time=$((CHUNK_SIZE * 3)) --mem-per-cpu=1024"
+CHUNK_SIZE=50
+SBATCH_OPTIONS="-J ${1} -n 1 -N 1 --time=$((CHUNK_SIZE * 4)) --mem-per-cpu=2048"
 CONVERT_OPTIONS="-type Grayscale -background white +matte -depth 32"
 declare -a extensions=("_jp2.zip" "_tif.zip" "_raw_jp2.zip" ".pdf" "_bw.pdf")
 
@@ -14,7 +14,7 @@ for extension in "${extensions[@]}"; do
   url="https://archive.org/download/${1}/${1}${extension}"
   curl_output=$(curl --fail -L -I "${url}" 2>&1)
   if [ $? -eq 0 ]; then
-    mkdir -v "${1}"
+    mkdir -pv "${1}"
     cd "${1}"
     filename="${1}${extension}"
     if [ ! -f "$filename" ]; then
@@ -23,7 +23,7 @@ for extension in "${extensions[@]}"; do
       case "${filename##*.}" in
         zip)
           echo "Unzipping..."
-          unzip -jq "${filename}" && rm "${filename}" && touch "${filename}"
+          unzip -ojq "${filename}" && rm "${filename}" && touch "${filename}"
           ;;
         pdf)
           echo "Converting..."
