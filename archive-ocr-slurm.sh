@@ -19,7 +19,7 @@ while (($#)); do
     curl_output=$(curl --fail -L -I "${url}" 2>&1)
     if [ $? -eq 0 ]; then
       mkdir -pv "${1}"
-      cd "${1}"
+      pushd "${1}"
       filename="${1}${extension}"
       if [ ! -f "$filename" ]; then
         echo "Downloading $filename from $url"
@@ -44,6 +44,7 @@ while (($#)); do
         rm *.hocr master.zip
       fi
       find . \( -name '*.jp2' -o -name '*.tif' -o -name '*.png' \) -print0 | xargs -0 -r -n $CHUNK_SIZE sbatch -J ${1} $SBATCH_OPTIONS $DIR/archive-ocr-slurm-runocr.sh "${LANG}"
+      popd
       break
     fi
   done
