@@ -5,8 +5,8 @@ It assumes you've installed Tesseract (and the corresponding language training f
 Usage
 =====
 
-    ./archive-ocr-slurm.sh [Internet Archive volume identifier] [Tesseract language code(s)]
+    ./archive-ocr-slurm.sh [Tesseract language code(s)] [Internet Archive volume identifier(s)]
 
 Example:
 
-    ./archive-ocr-slurm.sh ananatomicaldis00morggoog lat+grc
+    ./archive-ocr-slurm.sh lat+grc ananatomicaldis00morggoog
