@@ -6,7 +6,7 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 CHUNK_SIZE=50
-SBATCH_OPTIONS="-J ${1} -n 1 -N 1 --time=$((CHUNK_SIZE * 4)) --mem-per-cpu=2048"
+SBATCH_OPTIONS="-n 1 -N 1 --time=$((CHUNK_SIZE * 4)) --mem-per-cpu=2048"
 CONVERT_OPTIONS="-type Grayscale -background white +matte -depth 32"
 declare -a extensions=("_jp2.zip" "_tif.zip" "_raw_jp2.zip" ".pdf" "_bw.pdf")
 
@@ -43,7 +43,7 @@ while (($#)); do
         unzip -j -o master.zip
         rm *.hocr master.zip
       fi
-      find . \( -name '*.jp2' -o -name '*.tif' -o -name '*.png' \) -print0 | xargs -0 -r -n $CHUNK_SIZE sbatch $SBATCH_OPTIONS $DIR/archive-ocr-slurm-runocr.sh "${LANG}"
+      find . \( -name '*.jp2' -o -name '*.tif' -o -name '*.png' \) -print0 | xargs -0 -r -n $CHUNK_SIZE sbatch -J ${1} $SBATCH_OPTIONS $DIR/archive-ocr-slurm-runocr.sh "${LANG}"
       break
     fi
   done
