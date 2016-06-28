@@ -6,7 +6,7 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 CHUNK_SIZE=50
-SBATCH_OPTIONS="-n 1 -N 1 --time=$((CHUNK_SIZE * 4)) --mem-per-cpu=2048"
+SBATCH_OPTIONS="-n 1 -N 1 --time=$((CHUNK_SIZE * 6)) --mem-per-cpu=4096"
 CONVERT_OPTIONS="-type Grayscale -background white +matte -depth 32"
 declare -a extensions=("_jp2.zip" "_tif.zip" "_raw_jp2.zip" ".pdf" "_bw.pdf")
 
