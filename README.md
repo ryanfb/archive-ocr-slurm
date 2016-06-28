@@ -1,6 +1,6 @@
 This repository contains some simple control scripts for running Tesseract OCR against digitized Internet Archive books on a [SLURM](https://en.wikipedia.org/wiki/Slurm_Workload_Manager) cluster.
 
-It assumes you've installed Tesseract (and the corresponding language training files) in `~/local` following [these instructions](https://code.google.com/p/tesseract-ocr/wiki/Compiling#Install_elsewhere_/_without_root).
+It assumes you've installed Tesseract (and the corresponding language training files) in `~/local` following [these instructions](https://github.com/tesseract-ocr/tesseract/wiki/Compiling#install-elsewhere--without-root).
 
 Usage
 =====
