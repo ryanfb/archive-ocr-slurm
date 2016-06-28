@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# set ImageMagick temp directory so it doesn't write (and fill up) default /tmp on login nodes
+export MAGICK_TMPDIR="/work/$(whoami)"
+
 CONVERT_OPTIONS="-type Grayscale -background white +matte -depth 32"
 
 LANG="${1}"

@@ -4,6 +4,9 @@
 #SBATCH --time=200
 #SBATCH --mem-per-cpu=2048
 
+# set ImageMagick temp directory so it doesn't write (and fill up) default /tmp on login nodes
+export MAGICK_TMPDIR="/work/$(whoami)"
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 CHUNK_SIZE=50
 SBATCH_OPTIONS="-n 1 -N 1 --time=$((CHUNK_SIZE * 6)) --mem-per-cpu=4096"
