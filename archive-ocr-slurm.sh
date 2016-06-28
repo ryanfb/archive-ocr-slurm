@@ -41,11 +41,14 @@ while (($#)); do
             ;;
         esac
       fi
+
+      # dwnload any existing Latin OCR results; anyone else using this script should probably delete this block
       wget "https://github.com/latin-ocr/${1}/archive/master.zip"
       if [ $? -eq 0 ]; then
         unzip -j -o master.zip
         rm *.hocr master.zip
       fi
+
       find . \( -name '*.jp2' -o -name '*.tif' -o -name '*.png' \) -print0 | xargs -0 -r -n $CHUNK_SIZE sbatch -J ${1} $SBATCH_OPTIONS $DIR/archive-ocr-slurm-runocr.sh "${LANG}"
       popd
       break
